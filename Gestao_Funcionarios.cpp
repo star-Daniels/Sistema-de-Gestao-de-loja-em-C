@@ -6,7 +6,10 @@
 #define MAX 100
 
 typedef struct {
-    char id[30], nome[50], cargo[20], senha[20];
+    int id;
+    char nome[50];
+    char cargo[20];
+    char senha[20];
     
 } Funcionario;
 
@@ -15,17 +18,34 @@ Funcionario funcionarios[MAX];
 int total = 0;
 
 void cadastrarFuncionario() {
-
+	int id,existe,i;
     if (total >= MAX) {
-        printf("\nLimite de funcionários atingido!\n");
+        printf("\nLimite de funcionÃ¡rios atingido!\n");
         return;
     }
 
-    printf("\n===== CADASTRO DE FUNCIONÁRIO =====\n");
+    printf("\n===== CADASTRO DE FUNCIONÃRIO =====\n");
 
-    printf("ID: ");
-    fgets(funcionarios[total].id, 20, stdin);
-	funcionarios[total].id[strcspn(funcionarios[total].id, "\n")] = '\0';
+    do {
+
+        existe = 0;
+
+        printf("ID: ");
+        scanf("%d", &id);
+        getchar();
+
+        for(i = 0; i < total; i++) {
+
+            if(funcionarios[i].id == id) {
+                printf("ID ja usado! Digite outro.\n");
+                existe = 1;
+                break;
+            }
+        }
+
+    } while(existe);
+
+    funcionarios[total].id = id;
 
     printf("Nome: ");
     fgets(funcionarios[total].nome, 50, stdin);
@@ -41,22 +61,22 @@ void cadastrarFuncionario() {
 
     total++;
 
-    printf("\nFuncionário cadastrado com sucesso!\n");
+    printf("\nFuncionÃ¡rio cadastrado com sucesso!\n");
 }
 
 void listarFuncionarios() {
 
     if (total == 0) {
-        printf("\nNenhum funcionário cadastrado.\n");
+        printf("\nNenhum funcionÃ¡rio cadastrado.\n");
         return;
     }
 
-    printf("\n===== LISTA DE FUNCIONÁRIOS =====\n");
+    printf("\n===== LISTA DE FUNCIONÃRIOS =====\n");
 
     for (int i = 0; i < total; i++) {
 
-        printf("\nFuncionário %d\n", i + 1);
-        printf("ID: %s\n", funcionarios[i].id);
+        printf("\nFuncionÃ¡rio %d\n", i + 1);
+        printf("ID: %d\n", funcionarios[i].id);
         printf("Nome: %s\n", funcionarios[i].nome);
         printf("Cargo: %s\n", funcionarios[i].cargo);
     }
@@ -71,10 +91,10 @@ int main() {
     do {
 
         printf("\n========== MENU ==========\n");
-        printf("1 - Cadastrar funcionário\n");
-        printf("2 - Listar funcionários\n");
+        printf("1 - Cadastrar funcionÃ¡rio\n");
+        printf("2 - Listar funcionÃ¡rios\n");
         printf("0 - Sair\n");
-        printf("Escolha uma opção: ");
+        printf("Escolha uma opÃ§Ã£o: ");
         scanf("%d", &opcao);
         getchar();
 
@@ -93,7 +113,7 @@ int main() {
                 break;
 
             default:
-                printf("\nOpção inválida!\n");
+                printf("\nOpÃ§Ã£o invÃ¡lida!\n");
         }
 
     } while(opcao != 0);
