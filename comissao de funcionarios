@@ -1,0 +1,221 @@
+/*
+ * ============================================================
+ *  MODULO: Comissao de Funcionarios
+ *  Projeto: Sistema de Stock de Loja
+ * ============================================================
+ *
+ *  Como funciona:
+ *  - Cada venda realizada gera um valor fixo de comissao
+ *  - O programa armazena ate 50 funcionarios
+ *  - E possivel cadastrar funcionarios, registrar vendas,
+ *    calcular/exibir comissao e listar todos os funcionarios
+ * ============================================================
+ */
+
+#include <stdio.h>
+#include <string.h>
+
+/* ── Constantes ─────────────────────────────────────────── */
+#define MAX_FUNCIONARIOS 50       /* maximo de funcionarios */
+#define COMISSAO_POR_VENDA 15.00  /* valor fixo por venda (ex: 15 kwanzas/reais) */
+
+/* ── Estrutura do Funcionario ───────────────────────────── */
+/*
+ * Struct guarda os dados de cada funcionario.
+ * 'struct' em C e como uma "ficha" com varios campos.
+ */
+typedef struct {
+    int    id;              /* numero unico do funcionario */
+    char   nome[50];        /* nome do funcionario */
+    int    total_vendas;    /* quantas vendas ele fez */
+    float  comissao_total;  /* valor total de comissao acumulada */
+} Funcionario;
+
+/* ── Variaveis Globais ───────────────────────────────────── */
+/*
+ * 'funcionarios' e um array (lista) de fichas.
+ * 'quantidade' guarda quantos funcionarios foram cadastrados.
+ */
+Funcionario funcionarios[MAX_FUNCIONARIOS];
+int quantidade = 0;
+
+/* ══════════════════════════════════════════════════════════
+ *  FUNCAO: cadastrar_funcionario
+ *  O que faz: pede nome e ID, cria a ficha do funcionario
+ * ══════════════════════════════════════════════════════════ */
+void cadastrar_funcionario() {
+    /* Verifica se ainda ha espaco na lista */
+    if (quantidade >= MAX_FUNCIONARIOS) {
+        printf("\nLimite de funcionarios atingido!\n");
+        return;
+    }
+
+    /* Usa o indice atual como posicao na lista */
+    int i = quantidade;
+
+    printf("\n--- CADASTRAR FUNCIONARIO ---\n");
+    printf("ID do funcionario: ");
+    scanf("%d", &funcionarios[i].id);
+    printf("Nome: ");
+    scanf(" %[^\n]", funcionarios[i].nome); /* le o nome com espacos */
+
+    /* Inicia contadores zerados */
+    funcionarios[i].total_vendas   = 0;
+    funcionarios[i].comissao_total = 0.0;
+
+    quantidade++; /* incrementa o total de funcionarios */
+
+    printf("\nFuncionario '%s' cadastrado com sucesso!\n", funcionarios[i].nome);
+}
+
+/* ══════════════════════════════════════════════════════════
+ *  FUNCAO: buscar_funcionario
+ *  O que faz: percorre a lista e retorna o indice do
+ *             funcionario com o ID informado (-1 se nao achar)
+ * ══════════════════════════════════════════════════════════ */
+int buscar_funcionario(int id) {
+    int i;
+    for (i = 0; i < quantidade; i++) {
+        if (funcionarios[i].id == id) {
+            return i; /* encontrou, devolve a posicao */
+        }
+    }
+    return -1; /* nao encontrou */
+}
+
+/* ══════════════════════════════════════════════════════════
+ *  FUNCAO: registrar_venda
+ *  O que faz: adiciona vendas ao funcionario e calcula
+ *             a comissao (vendas x valor fixo)
+ * ══════════════════════════════════════════════════════════ */
+void registrar_venda() {
+    int id, vendas, pos;
+
+    printf("\n--- REGISTRAR VENDAS ---\n");
+    printf("ID do funcionario: ");
+    scanf("%d", &id);
+
+    pos = buscar_funcionario(id);
+
+    if (pos == -1) {
+        printf("\nFuncionario nao encontrado!\n");
+        return;
+    }
+
+    printf("Quantas vendas realizou: ");
+    scanf("%d", &vendas);
+
+    if (vendas < 0) {
+        printf("\nNumero de vendas invalido!\n");
+        return;
+    }
+
+    /* Atualiza os dados do funcionario */
+    funcionarios[pos].total_vendas   += vendas;
+    funcionarios[pos].comissao_total += vendas * COMISSAO_POR_VENDA;
+
+    printf("\n%d venda(s) registrada(s) para %s.\n",
+           vendas, funcionarios[pos].nome);
+    printf("Comissao acumulada: %.2f\n", funcionarios[pos].comissao_total);
+}
+
+/* ══════════════════════════════════════════════════════════
+ *  FUNCAO: exibir_comissao
+ *  O que faz: mostra o resumo de comissao de um funcionario
+ * ══════════════════════════════════════════════════════════ */
+void exibir_comissao() {
+    int id, pos;
+
+    printf("\n--- CONSULTAR COMISSAO ---\n");
+    printf("ID do funcionario: ");
+    scanf("%d", &id);
+
+    pos = buscar_funcionario(id);
+
+    if (pos == -1) {
+        printf("\nFuncionario nao encontrado!\n");
+        return;
+    }
+
+    printf("\n=============================\n");
+    printf("  Funcionario : %s\n",     funcionarios[pos].nome);
+    printf("  ID          : %d\n",     funcionarios[pos].id);
+    printf("  Vendas      : %d\n",     funcionarios[pos].total_vendas);
+    printf("  Comissao    : %.2f\n",   funcionarios[pos].comissao_total);
+    printf("  (%.2f por venda)\n",     COMISSAO_POR_VENDA);
+    printf("=============================\n");
+}
+
+/* ══════════════════════════════════════════════════════════
+ *  FUNCAO: listar_funcionarios
+ *  O que faz: exibe todos os funcionarios cadastrados
+ *             com suas respectivas comissoes
+ * ══════════════════════════════════════════════════════════ */
+void listar_funcionarios() {
+    int i;
+
+    if (quantidade == 0) {
+        printf("\nNenhum funcionario cadastrado.\n");
+        return;
+    }
+
+    printf("\n========================================\n");
+    printf("       LISTA DE FUNCIONARIOS\n");
+    printf("========================================\n");
+    printf("%-5s %-20s %-10s %-12s\n",
+           "ID", "Nome", "Vendas", "Comissao");
+    printf("----------------------------------------\n");
+
+    for (i = 0; i < quantidade; i++) {
+        printf("%-5d %-20s %-10d %.2f\n",
+               funcionarios[i].id,
+               funcionarios[i].nome,
+               funcionarios[i].total_vendas,
+               funcionarios[i].comissao_total);
+    }
+
+    printf("========================================\n");
+    printf("Total de funcionarios: %d\n", quantidade);
+}
+
+/* ══════════════════════════════════════════════════════════
+ *  FUNCAO: menu
+ *  O que faz: exibe as opcoes e le a escolha do usuario
+ * ══════════════════════════════════════════════════════════ */
+void menu() {
+    printf("\n============================\n");
+    printf("  COMISSAO DE FUNCIONARIOS  \n");
+    printf("============================\n");
+    printf("1. Cadastrar funcionario\n");
+    printf("2. Registrar vendas\n");
+    printf("3. Consultar comissao\n");
+    printf("4. Listar todos\n");
+    printf("0. Sair\n");
+    printf("----------------------------\n");
+    printf("Escolha: ");
+}
+
+/* ══════════════════════════════════════════════════════════
+ *  FUNCAO PRINCIPAL: main
+ *  O que faz: loop principal que chama o menu e as funcoes
+ * ══════════════════════════════════════════════════════════ */
+int main() {
+    int opcao;
+
+    do {
+        menu();
+        scanf("%d", &opcao);
+
+        switch (opcao) {
+            case 1: cadastrar_funcionario(); break;
+            case 2: registrar_venda();       break;
+            case 3: exibir_comissao();       break;
+            case 4: listar_funcionarios();   break;
+            case 0: printf("\nSaindo...\n"); break;
+            default: printf("\nOpcao invalida!\n");
+        }
+
+    } while (opcao != 0); /* repete ate o usuario escolher 0 */
+
+    return 0;
+}
