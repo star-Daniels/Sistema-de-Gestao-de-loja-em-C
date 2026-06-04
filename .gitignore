@@ -1,0 +1,30 @@
+# Binarios e objetos
+*.o
+*.obj
+*.exe
+sistema
+
+# Build / IDE
+build/
+out/
+.vs/
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+
+# Pasta portavel gerada pelo windeployqt (binarios do Qt -- regerar com build.ps1)
+dist/
+
+# Banco de dados SQLite gerado em tempo de execucao
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# Logs (instalacao do toolchain, aqtinstall, etc.)
+*.log
+
+# Arquivos de dados do formato antigo (texto), nao usados mais
+dados.txt
+vendas.txt
+fechamento.txt
